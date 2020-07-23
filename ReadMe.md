@@ -24,5 +24,4 @@ _!save {title}:_ Creates a file and stores data inputed. If no second argument i
 _!recall {title}:_ Displays data stored in a save.  
 _!saveDelete {title}:_ Admins can delete a file/save.  
 _All documents/attachments will be automatically reposted in #files._  
- ## Self Hosting
- This repository is public for the purpose of sharing ideas and showcasing how this bot works __and NOT__ for people to fork it and host it.   
+ 

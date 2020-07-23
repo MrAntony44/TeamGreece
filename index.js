@@ -17,6 +17,8 @@ let peopleYes = [];
 let peopleMaybe = [];
 let peopleNo = [];
 let peopleAll = [];
+var fileChannelId = '696005900863012866'
+
 
 
 
@@ -52,7 +54,6 @@ bot.on('ready', () =>{
 bot.on('message', message => {
 
 
-    let fileChannelId = '696005900863012866'
     if(message.author.bot) return;
     let args = message.content.substring(PREFIX.length).split(" ");
     if(message.channel.id != fileChannelId){
@@ -771,10 +772,24 @@ bot.on('message', message => {
                     message.channel.send(saveDeleteEmb);
                     setTimeout(function(){ message.channel.bulkDelete(1) }, 5000)
                 }
-                
+            
 
-
-
+            break;
+            case 'config':
+                if(!message.member.roles.cache.some(r => r.name === "Admin")) return message.channel.send("You don't have permission to do that!")
+                let arg3 = message.content.replace(args[1], '').replace(args[0], '').replace('!', '').substring(2);
+                if(!args[1]){ 
+                    message.channel.send('CONFIG COMMAND LIST');
+                }
+                if(args[1] == 'files'){
+                    if(!args[2]){
+                        message.channel.send('You need to provide more arguments')
+                        setTimeout(function(){message.channel.bulkDelete(1)}, 3000)
+                    }else if(args[1]){
+                        fileChannelId = arg3
+                        message.channel.send('changed successfully');
+                    }
+                }
             break;
 
 
