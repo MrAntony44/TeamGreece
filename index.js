@@ -5,9 +5,10 @@ const token = BotToken.token;
 const embed = require('rich-embed');
 const PREFIX = '!';
 const fs = require('fs')
+const moment = require('moment');
 
 
-var version = "Version 0.6" // Update
+var version = "Version 0.9-DEV" // Update
 var activeReminders = []; 
 var reminder = [];
 var activeMeetings = [];
@@ -49,20 +50,59 @@ bot.on('ready', () =>{
 
 
 bot.on('message', message => {
+
+
+    let fileChannelId = '696005900863012866'
     if(message.author.bot) return;
     let args = message.content.substring(PREFIX.length).split(" ");
-    if(message.channel.id == 696005404840427590 || 696005770965155911 || 696005802905043065 || 696005830364889128){
+    if(message.channel.id != fileChannelId){
         var Attachment = (message.attachments).array();
         if (message.attachments.size > 0) {
-            message.channel.send('A copy of the file sent by ' + message.member.user.tag + ' is now sent to #files!')
-            console.log("New Attachment")
+            let messageAttachment = 'A copy of the file sent by ' + message.member.user.tag + ' is now sent to #files!'
+            message.channel.send(messageAttachment)
+            fs.writeFile('./Attachments.txt', 'Attachment sent by ' + message.member.user.tag + ' on ' + moment().format('MMMM Do YYYY, h:mm:ss a') + '  |  ', { flag: 'a' }, (err) => {
+                if(err) throw err;
+                // console.log('saved')
+            })
+            // console.log("New Attachment")
             // console.log(Attachment[0].url);
-            bot.channels.cache.get('696005900863012866').send('Attachment sent by ' + message.member.user.tag + ' in ' + "<#" + message.channel.id + '>   ' + Attachment[0].url);
+            bot.channels.cache.get(fileChannelId).send('Attachment sent by ' + message.member.user.tag + ' in ' + "<#" + message.channel.id + '>   ' + Attachment[0].url);
             
         }
     }
+
+    // AI Reminder Feature
+    let remindArray = ["stis", "meeting", "στις", "μεετινγ", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24"];
+    let timesMentioned = 0;
+    let timesMentioned2 = 0;
+    for (i=0;i<remindArray.length;i++) {
+        if(message.content.toLowerCase().includes(remindArray[i])) {
+        timesMentioned = timesMentioned + 1;
+        }
+    }
+    if(timesMentioned <= 1){
+        message.channel.send('Not strong enough(<=1)')
+    }else if(timesMentioned <=2){
+        message.channel.send('Kinda strong, keep monitoring(<=2')
+    }else if(timesMentioned >=3){
+        message.channel.send('STRONG(>=3)')
+        // Defining which date the event willt take place\
+        let remindArray2 = ["tomorrow", "αυριο", "αύριο", "σήμερα", "σημερα", "μεθάυριο", "μευαύριο", "μεθαύριο", "δευτερα", "τρίτη", "τετάρτη", "πεμπτη", "παρασκευή", "σαββατο", "κυριακη", "δευτέρα", "τρίτη", "τετάρτη", "πέμπτη", "παρασκευή", "σάββατο", "κυριακή"]
+        for (i=0;i<remindArray2.length;i++) {
+            if(message.content.toLowerCase().includes(remindArray2[i])) {
+            timesMentioned2 = timesMentioned2 + 1;
+            }
+        }
+        if(timesMentioned2 == 0){
+            message.channel.send('probably today') //TRY USING .ON
+            
+        }else if(timesMentioned2 >= 1){
+            message.channel.send('ready to start timer')
+        }
+    }
+
     switch(args[0]){
-        // Reminder Feature (Officially finished)
+        // Reminder Feature
         case 'rset':
             try {
                 message.channel.bulkDelete(1);
